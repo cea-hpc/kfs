@@ -1,0 +1,169 @@
+kfs
+===
+
+image:https://travis-ci.org/cea-hpc/kfs.svg?branch=master["Build Status", link="https://travis-ci.org/cea-hpc/kfs"]
+
+kfs is a HTTPS file server serving files from Kerberos shares. It can be
+configured to expose different shares and/or directories on a same share.
+
+How does it work?
+-----------------
+
+The main program is kfs which is a daemon listening to HTTPS requests. When a
+connection is made it authenticates the user using either SPNEGO or her
+login/password. If SPNEGO is used, the user must delegate her Kerberos
+credentials to the server.
+
+Once the user is authenticated, the server will acquire new Kerberos
+credentials which will be saved in a file owned by the user in +/tmp+. It will
+then spawn a simple HTTP server as the user which will be able to access the
+user files thanks to the previously acquired credentials. The main server will
+act as a proxy between the user and the spawned HTTP server.
+
+The user HTTP server will live until the Kerberos credentials expire or after
+a time defined in the configuration. If the user initiates another connection
+during this period, new credentials will be acquired and the lifetime of the
+server will be extended accordingly.
+
+Installing
+----------
+
+Install the Go compiler suite: see http://golang.org/doc/install for details.
+
+Define and export the +$GOPATH+ directory where the source code will be
+unpacked (e.g. '$HOME/go'):
+
+	$ export GOPATH=$HOME/go
+	$ mkdir -p $GOPATH/src/github.com/cea-hpc
+	$ cd $GOPATH/src/github.com/cea-hpc
+	$ tar xvf kfs-X.Y.Z.tar.gz
+
+Compile binaries:
+
+	$ cd kfs-X.Y.Z
+	$ make
+
+Install binaries in +/usr/sbin+:
+
+	# make install
+
+The server needs a configuration file to start (see next section for details):
+
+	# kfs /path/to/kfs.yaml
+
+Configuration
+-------------
+
+A sample commented configuration file is found in the +config+ directory.
+
+The only required parameters are the certificate and key files used for HTTPS:
+
+*tls_cert_file*::
+	[string] path to the certificate file.
+
+*tls_key_file*::
+	[string] path to the key file.
+
+By default the server listen on all interfaces on the 8080 port. It can be
+changed with the *listen* parameter whose format is '[host]:port'. If 'host'
+is not specified the server will listen on all available IP addresses.
+
+The following parameters are used to configure Kerberos authentication :
+
+*gssapi_lib_path*::
+	[string] path to the gssapi library. It is empty by default and the
+	program should automatically detect the library. If it is not the case
+	the path should be set with this parameter.
+
+*keytab*::
+	[string] path to the service keytab file. By default it is
+	'/etc/krb5.keytab'.
+
+*service_name*::
+	[string] Kerberos service name. By default it is 'HTTP/<fully
+	qualified domain name>'.
+
+*realms*::
+	[list of strings] Kerberos realms to authenticate users. They are
+	tried sequentially until one is able to authenticate the user. Default
+	is empty and administrators should add their realm(s).
+
+The next parameters are used to configure the user process which will access
+user files:
+
+*user_file_server*::
+	[string] path to the 'kfs-user' helper binary. The default is
+	'kfs-user'.
+
+*max_lifetime*::
+	[string] this is the maximum lifetime of the user file server. The
+	format is a sequence of integers with a unit suffix: 'h' for hour, 'm'
+	for minute, 's' for second (e.g.  '2m40s', '1h', etc.). By default it
+	is empty and the lifetime is the same as the acquired Kerberos user
+	credentials.
+
+*routes*::
+	[mapping] this defines the routes for the user web server. The keys
+	are start of URL path (e.g. '/listings'). The values are the
+	file-system path it provides access to. The patterns '\{\{HOME}}' and
+	'\{\{USER}}' will respectively be replaced by the user home directory
+	and the user login name. If the parameter is empty the default
+	association is '/: "\{\{HOME}}"' which gives access to the full user
+	home directory. A more restrictive mapping can be defined like in the
+	following example:
+
+	routes:
+	    /listings: "{{HOME}}/listings"
+	    /scripts: "{{HOME}}/scripts"
+
+Miscellaneous
+-------------
+
+Helper files
+~~~~~~~~~~~~
+
+In the +misc+ directory you can find a systemd service unit file and a SPEC
+file to build a RPM for CentOS 7.
+
+How to enable SPNEGO authentication in Curl/Firefox?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To use SPNEGO authentication (i.e. not using login/password authentication)
+the user needs to delegate its Kerberos credentials to the server.
+
+Curl
+^^^^
+
+The user needs to use the +delegation+ command line parameter:
+
+	$ curl --negotiate -u ':' --delegation always https://kfs.domain.tld/listings/sample.txt
+
+Firefox
+^^^^^^^
+
+Two options must be configured in Firefox:
+
+*network.negotiate-auth.trusted-uris*::
+	To enable SPNEGO authentication if you already have a ticket. The name
+	of the kfs server should be added to the list.
+
+*network.negotiate-auth.delegation-uris*::
+	To enable the delegation of the user credentials to the kfs server.
+	The name of the kfs server should be added to the list.
+
+Copying
+-------
+
+Copyright (C) 2018-2019 CEA/DAM/DIF
+
+kfs is distributed under the CeCILL-B, a French transposition of the BSD
+license. See the included files +Licence_CeCILL-B_V1-en.txt+ (English version)
+and +Licence_CeCILL-B_V1-fr.txt+ (French version) or visit
+http://www.cecill.info for details.
+
+Author
+------
+
+Arnaud Guignard <arnaud.guignard@cea.fr>
+
+// vim:tw=78:ft=asciidoc:

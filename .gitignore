@@ -1,0 +1,6 @@
+# swap files
+*~
+.*.swp
+
+# binaries
+bin/

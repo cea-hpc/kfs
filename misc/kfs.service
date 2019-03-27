@@ -1,0 +1,11 @@
+[Unit]
+Description=Kerberized HTTPS user file server
+After=syslog.target network.target auditd.service
+
+[Service]
+ExecStart=/usr/sbin/kfs /etc/kfs/kfs.yaml
+Restart=on-failure
+RestartSec=42s
+
+[Install]
+WantedBy=multi-user.target

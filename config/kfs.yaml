@@ -1,0 +1,42 @@
+---
+# TLS certificate file. REQUIRED
+tls_cert_file: "/path/to/kfs.pem"
+
+# TLS key file. REQUIRED
+tls_key_file: "/path/to/kfs.key"
+
+# Listen address [host]:port (default: ":8080").
+#listen: ":8080"
+
+# Path to gssapi library. Empty by default: it will be automatically detected.
+#gssapi_lib_path: ""
+
+# Path to keytab file (default: "/etc/krb5.keytab").
+#keytab: "/etc/krb5.keytab"
+
+# Kerberos service name (default: "HTTP/FQDN").
+#service_name: "HTTP/machine.example.com"
+
+# Kerberos realms to authenticate users (default: empty, administrators should
+# add their realm(s)).
+#realms:
+#    - realm1
+#    - realm2
+
+# Path to kfs-user executable (default: "kfs-user").
+#user_file_server: "kfs-user"
+
+# Maximum lifetime of user file server. The format is a sequence of integers
+# with a unit suffix: 'h' for hour, 'm' for minute, 's' for second (e.g.
+# '2m40s', '1h', etc.) By default it is empty and the lifetime is the same as
+# the acquired Kerberos credentials.
+#max_lifetime: ""
+
+# Web routing definition. It's a mapping whose keys are start of URL path and
+# values are the file-system path it provides access to. The patterns {{HOME}}
+# and {{USER}} will respectively be replaced by the user home directory and the
+# user login name. If the parameter is empty the default association is:
+#   /: "{{HOME}}"
+#routes:
+#    /listings: "{{HOME}}/listings"
+#    /scripts: "{{HOME}}/scripts"
