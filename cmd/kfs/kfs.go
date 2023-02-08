@@ -11,6 +11,7 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
 	"errors"
 	"flag"
 	"fmt"
@@ -297,6 +298,10 @@ func main() {
 
 	srv := &http.Server{
 		Addr: cfg.Listen,
+		TLSConfig: &tls.Config{
+			MinVersion: tls.VersionTLS12,
+			PreferServerCipherSuites: true,
+		},
 	}
 
 	idleConnsClosed := make(chan struct{})
