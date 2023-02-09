@@ -183,7 +183,7 @@ outerswitch:
 			usernames = append(usernames, username)
 		}
 
-		for _, krbusername := range usernames {
+		for _, krbusername = range usernames {
 			delegatedCred, err = server.AuthenticateUserWithPassword(krbusername, pass)
 			if err == nil {
 				break outerswitch
