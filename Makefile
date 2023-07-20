@@ -17,10 +17,10 @@ all: exe
 exe: $(EXE)
 
 bin/kfs: $(KFS_SRC)
-	$(GO) build -o $@ $(KFS_GIT_URL)/cmd/kfs
+	$(GO) build -mod=vendor -o $@ $(KFS_GIT_URL)/cmd/kfs
 
 bin/kfs-user: $(KFS_USER_SRC)
-	$(GO) build -o $@ $(KFS_GIT_URL)/cmd/kfs-user
+	$(GO) build -mod=vendor -o $@ $(KFS_GIT_URL)/cmd/kfs-user
 
 install: install-binaries
 

@@ -1,0 +1,6 @@
+# github.com/cea-hpc/gssapi v0.0.0-20190327141111-bbee0d41338d
+## explicit
+github.com/cea-hpc/gssapi
+# github.com/go-yaml/yaml v0.0.0-20190319135612-7b8349ac747c
+## explicit
+github.com/go-yaml/yaml

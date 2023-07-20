@@ -4,7 +4,7 @@
 %global import_path   github.com/cea-hpc/%{name}
 
 Name:           kfs
-Version:        0.1.0
+Version:        0.1.1
 Release:        1%{?dist}
 Summary:        Kerberos HTTPS user file server
 License:        CeCILL-B
@@ -18,8 +18,6 @@ Requires(post):   systemd
 Requires(preun):  systemd
 Requires(postun): systemd
 BuildRequires:    systemd
-
-Summary: Kerberos HTTPS user file server
 
 %description
 %{summary}
@@ -69,5 +67,9 @@ exit 0
 exit 0
 
 %changelog
+* Thu Jul 20 2023 Cyril Servant <cyril.servant@cea.fr> - 0.1.1-1
+- remove duplicate 'Summary' entry in specfile
+- kfs 0.1.1
+
 * Tue Sep 04 2018 Arnaud Guignard <arnaud.guignard@cea.fr> - 0.1.0-1
 - kfs 0.1.0

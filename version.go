@@ -1,4 +1,4 @@
 package kfs
 
 // kfs version number
-var KfsVersion = "0.1.0"
+var KfsVersion = "0.1.1"
