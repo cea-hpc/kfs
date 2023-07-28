@@ -4,7 +4,7 @@
 %global import_path   github.com/cea-hpc/%{name}
 
 Name:           kfs
-Version:        0.1.1
+Version:        0.1.2
 Release:        1%{?dist}
 Summary:        Kerberos HTTPS user file server
 License:        CeCILL-B
@@ -67,6 +67,12 @@ exit 0
 exit 0
 
 %changelog
+* Fri Jul 28 2023 Cyril Servant <cyril.servant@cea.fr> - 0.1.2-1
+- Adds minimum version for TLS to 1.2
+- In go := is not the same than = here krbusername already exists.
+- Selects only some ciphers to be available to clients.
+- kfs 0.1.2
+
 * Thu Jul 20 2023 Cyril Servant <cyril.servant@cea.fr> - 0.1.1-1
 - remove duplicate 'Summary' entry in specfile
 - kfs 0.1.1

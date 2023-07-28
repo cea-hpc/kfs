@@ -154,7 +154,7 @@ Two options must be configured in Firefox:
 Copying
 -------
 
-Copyright (C) 2018-2019 CEA/DAM/DIF
+Copyright (C) 2018-2023 CEA/DAM/DIF
 
 kfs is distributed under the CeCILL-B, a French transposition of the BSD
 license. See the included files +Licence_CeCILL-B_V1-en.txt+ (English version)
