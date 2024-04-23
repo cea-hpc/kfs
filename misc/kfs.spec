@@ -5,12 +5,14 @@
 
 Name:           kfs
 Version:        0.1.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Kerberos HTTPS user file server
 License:        CeCILL-B
+URL:            https://%{import_path}/
 Source:         https://%{import_path}/archive/v%{version}/%{name}-%{version}.tar.gz
+Group:          Applications/Internet
 ExclusiveArch:  %{?go_arches:%{go_arches}}%{!?go_arches:%{ix86} x86_64 %{arm} aarch64}
-BuildRequires:  %{?go_compiler:compiler(go-compiler)}%{!?go_compiler:golang}
+BuildRequires:  golang
 BuildRequires:  krb5-devel
 Requires:       krb5-libs
 
@@ -35,19 +37,20 @@ mkdir -p ./_build/src/github.com/cea-hpc
 ln -s $(pwd) ./_build/src/%{import_path}
 
 export GOPATH=$(pwd)/_build:%{gopath}
-make
+%{__make} %{?_smp_mflags}
 
 # adjust path to libgssapi
 sed -i 's|^#gssapi_lib_path.*|gssapi_lib_path: "/usr/lib64/libgssapi_krb5.so.2"|' config/kfs.yaml
 
 %install
-make install DESTDIR=%{buildroot} prefix=%{_prefix} mandir=%{_mandir}
+%{make_install} DESTDIR=%{buildroot} prefix=%{_prefix} mandir=%{_mandir}
 install -d -m 0755 %{buildroot}%{_sysconfdir}/kfs
 install -p -m 0644 config/kfs.yaml %{buildroot}%{_sysconfdir}/kfs
 install -d -m 0755  %{buildroot}%{_unitdir}
 install -p -m 0644 misc/kfs.service %{buildroot}%{_unitdir}
 
 %files
+%defattr(-,root,root,-)
 %doc Licence_CeCILL-B_V1-en.txt Licence_CeCILL-B_V1-fr.txt README.asciidoc
 %{_unitdir}/kfs.service
 %config(noreplace) %{_sysconfdir}/kfs/kfs.yaml
@@ -67,6 +70,9 @@ exit 0
 exit 0
 
 %changelog
+* Tue Apr 23 2024 Olivier Delhomme <olivier.delhomme@cea.fr> - 0.1.2-2
+- Changes in spec file
+
 * Fri Jul 28 2023 Cyril Servant <cyril.servant@cea.fr> - 0.1.2-1
 - Adds minimum version for TLS to 1.2
 - In go := is not the same than = here krbusername already exists.
